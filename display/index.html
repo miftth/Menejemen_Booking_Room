@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Display</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: white;
+      background-image: url('image.png');
+      background-size: cover;         
+      background-repeat: no-repeat;   
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .time {
+      text-align: right;
+    }
+    .time .clock {
+      font-size: 60px;
+      font-weight: 200;
+      font-family: "Andale Mono, Courier New, Courier";    
+    }
+    .time .date {
+      font-size: 20px;
+      color: #bbb;      
+      font-family: "Andale Mono, Courier New, Courier";    
+    }
+
+    /* Layout dua kolom */
+    .content {
+      flex: 1;
+      display: flex;
+      margin-top: 30px;
+      gap: 30px;
+    }
+    .left {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .right {
+      flex: 1;
+      border-left: 1px solid #444;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Notifikasi cards */
+    .notification {
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+    }
+    .notification.success { background: #218838; }
+    .notification.warning { background: #d39e00; }
+    .notification.error { background: #c82333; }
+
+    .notification span {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .meetings {
+      flex-grow: 1;
+    }
+    .meeting {
+      margin-bottom: 25px;
+    }
+    .meeting time {
+      display: block;
+      font-size: 13px;
+      color: #bbb;
+    }
+    .meeting .title {
+      font-size: 18px;
+      margin-top: 5px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #bbb;
+      margin-top: 10px;
+    }
+    .footer button {
+      background: none;
+      border: none;
+      color: #bbb;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Earth 🌍<br> IP Room :00000</h1>
+    <div class="time">
+      <div class="clock" id="clock"></div>
+      <div class="date" id="date"></div>
+    </div>
+  </div>
+
+  <div class="content"> 
+    <div class="left">
+      <div class="notification success">
+        Room is available <span>for 4h 15m</span>
+      </div>
+      <div class="notification warning">
+        Upcoming meeting soon <span>in 15m</span>
+      </div>
+      <div class="notification error">
+        System error detected <span>check logs</span>
+      </div>
+    </div>
+
+    <!-- Right Side (Meetings sidebar) -->
+    <div class="right">
+      <div class="meetings">
+        <div class="meeting">
+          <time>01:00pm - 01:30pm</time>
+          <div class="title">PA meeting</div>
+        </div>
+        <div class="meeting">
+          <time>01:30pm - 02:30pm</time>
+          <div class="title">Sprint demo</div>
+        </div>
+        <div class="meeting">
+          <time>03:15pm - 04:15pm</time>
+          <div class="title">Sprint retrospective</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <button>Report problem</button>
+    <button>Calendar</button>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'pm' : 'am';
+      hours = hours % 12 || 12;
+      document.getElementById('clock').textContent = hours + ':' + minutes + ' ' + ampm;
+
+      const options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
+      document.getElementById('date').textContent = now.toLocaleDateString('id-JK', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>

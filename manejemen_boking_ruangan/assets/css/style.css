@@ -1,0 +1,70 @@
+nav ul{
+    background: #842029;
+    padding: 0 0px;
+    list-style: none;
+    position: relative;
+    font-family: 'helvetica,arial';
+
+}
+
+nav ul:after{
+    content: "";
+    clear: both;
+    display:block;
+
+}
+
+nav ul li{
+    float: left;
+
+}
+
+nav ul li:hover{
+    background-color: #fff;
+}
+
+nav ul li a{
+    display: block;
+    padding: 20px 30px;
+    color: #ffffff;
+    text-decoration: none;
+
+}
+
+nav ul ul li {
+    float:none;
+    position:relative ;
+}
+
+nav ul li :hover > ul {
+    display: block;
+}
+
+nav ul ul li a{
+    padding: 10px 40px;
+    color: #fff;
+
+}
+
+nav ul ul li a:hover{
+    background: #222;
+   
+}
+
+nav ul ul ul{
+   position: absolute;
+   top: 0;
+   width: 200px;
+
+}
+
+.menu-container {
+    display: flex;
+    height: 100vh;
+ }
+
+.vertical-line {
+    width: 2px;
+    background-color: #000;
+    height: 100%; 
+}
