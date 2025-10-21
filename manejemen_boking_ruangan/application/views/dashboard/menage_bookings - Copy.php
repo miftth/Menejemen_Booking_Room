@@ -36,87 +36,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="<?= base_url('assets/js/chart.umd.min.js');?>"></script>
     <style>
-        :root{
-            --bg-900: #05060b;
-            --bg-800: #0b1120;
-            --glass: rgba(255,255,255,0.03);
-            --glass-2: rgba(255,255,255,0.025);
-            --glass-border: rgba(255,255,255,0.06);
-            --muted: #9aa4b2;
-            --accent-cyan: #5ee8ff;
-            --accent-purple: #a78bfa;
-            --accent-green: #3ee89a;
-            --card-shadow: 0 12px 40px rgba(2,6,23,0.6);
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-        }
-        html,body {
-            height:100%;
-            color: #e6eef8;
-            margin:0;
-            padding:0;
-        }
-        .wrap {
-            max-width:1200px;
-            margin:28px auto;
-            padding:22px;
-            border-radius:16px;
-            border:1px solid var(--glass-border);
-            background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
-            box-shadow: var(--card-shadow);
-            backdrop-filter: blur(8px) saturate(120%);
-        }
-        header {
-            display:flex;
-            align-items:center;
-            margin-bottom:18px;
-        }
-        .brand {
-            display:flex;
-            align-items:center;
-            gap:12px;
-        }
-        .brand .logo {
-            width:56px;
-            height:56px;
-            border-radius:12px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:#031124;
-            font-weight:800;
-            font-size:20px;
-            box-shadow: 0 10px 30px rgba(94,232,255,0.06);
-        }
+        :root{ --bg-900: #05060b; --bg-800: #0b1120; --glass: rgba(255,255,255,0.03); --glass-2: rgba(255,255,255,0.025); --glass-border: rgba(255,255,255,0.06); --muted: #9aa4b2; --accent-cyan: #5ee8ff; --accent-purple: #a78bfa; --accent-green: #3ee89a; --card-shadow: 0 12px 40px rgba(2,6,23,0.6); --text-primary: #e6eef8; --text-secondary: #9aa4b2; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+        .light-mode { --bg-900: #ffffff; --bg-800: #f8f9fa; --glass: rgba(0,0,0,0.02); --glass-2: rgba(0,0,0,0.01); --glass-border: rgba(0,0,0,0.08); --muted: #6c757d; --accent-cyan: #0dcaf0; --accent-purple: #6f42c1; --accent-green: #198754; --card-shadow: 0 12px 40px rgba(0,0,0,0.1); --text-primary: #212529; --text-secondary: #6c757d; }
+        html,body { height:100%; color: var(--text-primary); margin:0; padding:0; transition: background-color 0.3s ease, color 0.3s ease; }
+        .wrap { max-width:1200px; margin:28px auto; padding:22px; border-radius:16px; border:1px solid var(--glass-border); background-color: var(--bg-800); box-shadow: var(--card-shadow); backdrop-filter: blur(8px) saturate(120%); }
+        header { display:flex; align-items:center; margin-bottom:18px; }
+        .brand { display:flex; align-items:center; gap:12px; }
+        .brand .logo { width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); display:flex; align-items:center; justify-content:center; color:#031124; font-weight:800; font-size:20px; box-shadow: 0 10px 30px rgba(94,232,255,0.06); }
         .brand h1 { margin:0; font-size:1.05rem; font-weight:800; letter-spacing:0.2px; }
         .brand p { margin:0; color:var(--muted); font-size:0.85rem; }
-        .header-actions { display:flex; gap:30px; align-items:center;margin-left:115px }
+        .header-actions { display:flex; gap:30px; align-items:center; margin-left:auto; }
         .kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
-        .card-glass {
-            padding:14px;
-            border-radius:12px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-            border:1px solid var(--glass-border);
-            box-shadow: 0 8px 30px rgba(2,6,23,0.6);
-        }
-        .kpi {
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:12px;
-        }
+        .card-glass { padding:14px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); box-shadow: 0 8px 30px rgba(2,6,23,0.6); }
+        .kpi { display:flex; align-items:center; justify-content:space-between; gap:12px; }
         .kpi .left { display:flex; gap:12px; align-items:center; }
-        .kpi .icon {
-            width:56px;
-            height:56px;
-            border-radius:12px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:20px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-            border:1px solid rgba(255,255,255,0.03);
-        }
+        .kpi .icon { width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); }
         .kpi .value { font-weight:800; font-size:1.6rem; color:#fff; }
         .kpi .label { color:var(--muted); font-size:0.85rem; }
         .grid { display:grid; grid-template-columns: 1fr 420px; gap:14px; align-items:start; }
@@ -124,49 +58,18 @@
             .grid { grid-template-columns: 1fr; }
             .kpi-row { grid-template-columns:repeat(1,1fr); }
         }
-        .small-card { padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); }
+        .small-card { padding:12px; border-radius:10px;, background-color: var(--bg-800); border:1px solid var(--glass-border); }
         .table-wrap { margin-top:12px; border-radius:12px; overflow:hidden; border:1px solid var(--glass-border); }
         table { border-collapse:collapse; width:100%; }
-        thead th {
-            background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-            color: #e6fdf6;
-            font-weight:700;
-            border-bottom:1px solid rgba(255,255,255,0.03);
-            padding:12px 14px;
-            text-align:left;
-            font-size:0.85rem;
-        }
-        tbody td {
-            padding:12px 14px;
-            font-size:0.9rem;
-            border-bottom:1px dashed rgba(255,255,255,0.02);
-            vertical-align:middle;
-        }
+        thead th { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color: #e6fdf6; font-weight:700; border-bottom:1px solid rgba(255,255,255,0.03); padding:12px 14px; text-align:left; font-size:0.85rem; }
+        tbody td { padding:12px 14px; font-size:0.9rem; border-bottom:1px dashed rgba(255,255,255,0.02); vertical-align:middle; }
         tbody tr { transition: transform .12s ease, background .12s ease, box-shadow .12s ease; }
-        tbody tr:hover {
-            transform: translateY(-6px);
-            background: linear-gradient(90deg, rgba(94,232,255,0.02), rgba(167,139,250,0.01));
-            box-shadow: 0 10px 30px rgba(94,232,255,0.03);
-        }
-        .badge-status {
-            padding:6px 10px;
-            border-radius:999px;
-            font-weight:700;
-            font-size:0.82rem;
-            display:inline-block;
-            box-shadow: 0 6px 30px rgba(2,6,23,0.6) inset;
-        }
-        .badge-upcoming { background: linear-gradient(90deg, #ffcf6e, #ffb347); color: #111; box-shadow: none !important;text-shadow: none !important;}
-        .badge-ongoing { background: linear-gradient(90deg, #3ee89a, #14c77a); color: #051220;   box-shadow: none !important;  text-shadow: none !important;}
-        .badge-finished { background: linear-gradient(90deg, #3c6fb6ff, #5582ddff); color: #fff;   box-shadow: none !important;  text-shadow: none !important;}
-
-        .btn-action {
-            border-radius:10px;
-            padding:6px 8px;
-            border:1px solid rgba(255,255,255,0.03);
-            background:transparent;
-            color:#dff6f5;
-        }
+        tbody tr:hover { transform: translateY(-6px); background: linear-gradient(90deg, rgba(94,232,255,0.02), rgba(167,139,250,0.01)); box-shadow: 0 10px 30px rgba(94,232,255,0.03); }
+        .badge-status { padding:6px 10px; border-radius:999px; font-weight:700; font-size:0.82rem; display:inline-block; box-shadow: 0 6px 30px rgba(2,6,23,0.6) inset; }
+        .badge-upcoming { background: linear-gradient(90deg, #ffcf6e, #ffb347); color: #111; box-shadow: none !important;text-shadow: none !important; }
+        .badge-ongoing { background: linear-gradient(90deg, #3ee89a, #14c77a); color: #051220;   box-shadow: none !important;  text-shadow: none !important; }
+        .badge-finished { background: linear-gradient(90deg, #3c6fb6ff, #5582ddff); color: #fff;   box-shadow: none !important;  text-shadow: none !important; }
+        .btn-action { border-radius:10px; padding:6px 8px; border:1px solid rgba(255,255,255,0.03); background:transparent; color:#dff6f5; }
         .filters { display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
         .filters .form-control, .filters .form-select { background:transparent; color:#dff6f5; border:1px solid rgba(255,255,255,0.03); }
         .search-wrap { display:flex; align-items:center; gap:8px; background:var(--glass); border-radius:10px; padding:8px 10px; border:1px solid var(--glass-border); }
@@ -174,9 +77,7 @@
         .muted-small { color:var(--muted); font-size:0.8rem; }
         .float-up { transform: translateY(8px); opacity:0; }
         .float-up.show { transform: translateY(0); opacity:1; transition:all .6s cubic-bezier(.2,.9,.3,1); }
-        .equal-cards-row { display:flex; gap:14px; align-items:stretch; }
-        .equal-card { flex:1 1 0; display:flex; flex-direction:column; }
-        .card-body-canvas { flex:1 1 0; display:flex; flex-direction:column; justify-content:flex-start; }
+        
         .canvas-wrap { flex: 0 0 auto; }
         .list-scroll { max-height:120px; overflow:auto; }
         .dateFilter::placeholder{ color:#FFF; opacity: 1;}
@@ -206,63 +107,62 @@
                         </div>
                     </div>
                 </div>
+                <button id="toggleDarkMode" class="btn btn-lg btn-outline-light ms-3" title="Toggle dark mode"><i class="fa-solid fa-moon" style="color:var(--muted)"></i></button>
             </header>
-            <div class="kpi-row">
-                <div class="card-glass float-up" id="card1">
-                    <div class="kpi">
-                        <div class="left">
-                            <div class="icon" style="background: linear-gradient(135deg, rgba(94,232,255,0.08), rgba(167,139,250,0.06));">
-                                <i class="fa-solid fa-list-check" style="color:var(--accent-cyan); font-size:20px;"></i>
-                            </div>
-                            <div>
-                                <div class="label">Total Bookings</div>
-                                <div class="value"><?= e($total_booking); ?></div>
-                                <div class="muted-small">Favorite: <?= e($favorite_room); ?></div>
-                            </div>
+            <div class="row my-4 g-3">
+                <div class="col-md-4">
+                    <div class="card-glass p-3 d-flex align-items-center gap-3 float-up">
+                        <div class="icon" style="background: linear-gradient(135deg, rgba(94,232,255,0.08), rgba(167,139,250,0.06));">
+                            <i class="fa-solid fa-list-check bg-transparent" style="color:var(--accent-cyan); font-size:20px;"></i>
                         </div>
-                        
+                        <div class="flex-grow-1">
+                            <div class="label fw-bold ">Total Bookings</div>
+                            <div class="value fs-4 fw-bold"><?= e($total_booking); ?></div>
+                            <div class="muted-small">Favorite: <?= e($favorite_room); ?></div>
+                        </div>
                     </div>
                 </div>
-                <div class="card-glass float-up" id="card2">
-                    <div class="kpi">
-                        <div class="left">
+                <div class="col-md-4">
+                    <div class="card-glass p-3 d-flex justify-content-between align-items-center float-up">
+                        <div class="d-flex align-items-center gap-3">
                             <div class="icon" style="background: linear-gradient(135deg, rgba(255,191,105,0.05), rgba(255,140,140,0.03));">
-                                <i class="fa-solid fa-door-open" style="color:#ffd19a; font-size:20px;"></i>
+                              <i class="fa-solid fa-door-open bg-transparent" style="color:#ffd19a; font-size:20px;"></i>
                             </div>
                             <div>
-                                <div class="label">Total Rooms</div>
-                                <div class="value"><?= e($total_room); ?></div>
+                                <div class="label fw-bold ">Total Rooms</div>
+                                <div class="value fs-4 fw-bold"><?= e($total_room); ?></div>
                                 <div class="muted-small">Favorite: <?= e($favorite_room); ?></div>
                             </div>
                         </div>
-                        <div style="text-align:right;">
+                        <div class="text-end">
                             <div class="muted-small">Top Room</div>
-                            <div style="font-weight:700; color:var(--accent-purple);"><?= e($favorite_room); ?></div>
+                            <div class="fw-bold" style="color:var(--accent-purple);"><?= e($favorite_room); ?></div>
                         </div>
                     </div>
                 </div>
-                <div class="card-glass float-up" id="card3">
-                    <div class="kpi">
-                        <div class="left">
+                <div class="col-md-4">
+                    <div class="card-glass p-3 d-flex justify-content-between align-items-center float-up">
+                        <div class="d-flex align-items-center gap-3">
                             <div class="icon" style="background: linear-gradient(135deg, rgba(62,232,154,0.05), rgba(94,232,255,0.03));">
-                                <i class="fa-solid fa-chart-pie" style="color:var(--accent-green); font-size:20px;"></i>
+                                <i class="fa-solid fa-chart-pie bg-transparent" style="color:var(--accent-green); font-size:20px;"></i>
                             </div>
                             <div>
-                                <div class="label">Status Overview</div>
-                                <div class="value"><?= e($status_counts['ongoing']); ?> / <?= e($status_counts['upcoming']); ?></div>
+                                <div class="label fw-bold ">Status Overview</div>
+                                <div class="value fs-4 fw-bold"><?= e($status_counts['ongoing']); ?> / <?= e($status_counts['upcoming']); ?></div>
                                 <div class="muted-small"><?= e($status_counts['finished']); ?> finished</div>
                             </div>
                         </div>
-                        <div style="text-align:right;">
+                        <div class="text-end">
                             <div class="muted-small">Live</div>
-                            <div style="font-weight:700; color:var(--accent-cyan);" id="liveClock">--:--</div>
+                            <div class="fw-bold" id="liveClock" style="color:var(--accent-cyan);">--:--</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="equal-cards-row mb-3" style="margin-top:8px;">
-                <div class="equal-card">
-                    <div class="small-card card-glass card-body-canvas">
+
+            <div class="row my-4 mb-0">
+                <div class="col-md-4 mb-4">
+                    <div class="small-card card-glass h-100">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
                                 <div class="fw-bold">Booking Status</div>
@@ -278,8 +178,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="equal-card">
-                    <div class="small-card card-glass card-body-canvas">
+                <div class="col-md-4 mb-4">
+                    <div class="small-card card-glass h-100">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
                                 <div class="fw-bold">Most Used Rooms</div>
@@ -302,8 +202,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="equal-card">
-                    <div class="small-card card-glass card-body-canvas">
+                <div class="col-md-4 mb-4">
+                    <div class="small-card card-glass h-100">
                         <div class="fw-bold mb-2">Monthly Trend (<?= date('Y'); ?>)
                             <button class="btn btn-sm btn-outline-light float-end mb-2" onclick="exportChartWithImageToExcel()"><i class="fa fa-file-excel"></i> Export to Excel</button>
                         </div>
@@ -489,19 +389,19 @@
                 if (!ctx) return;
                 const g = ctx.getContext('2d').createLinearGradient(0, 0, 0, 180);
                 g.addColorStop(0, 'rgba(94,232,255,0.25)');
-                g.addColorStop(1, 'rgba(167,139,250,0.02)');
+                g.addColorStop(1, 'rgba(167, 139, 250, 0.24)');
                 new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                        labels: ['January','February','March','April','May','June','July','August','September','October','November','December'],
                         datasets: [{
                             label: 'Bookings',
                             data: monthlyStats,
                             fill: true,
                             backgroundColor: g,
-                            borderColor: 'rgba(94,232,255,0.95)',
-                            tension: 0.35,
-                            pointRadius: 3
+                            borderColor: 'rgba(44, 212, 241, 0.95)',
+                            tension: 0.40,
+                            pointRadius: 4
                         }]
                     },
                     options: {
