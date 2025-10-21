@@ -169,9 +169,23 @@
         .then(data => {
             let html = '';
             if (data.length === 0) {
-                html = '<div class="alert alert-warning text-center">There are no rooms available at that time.</div>';
+                html = '<div class="alert alert-warning text-center">No rooms found.</div>';
             } else {
                 data.forEach(function(room, idx) {
+                    let isAvailable = room.available;
+                    let bookedTimesHtml = '';
+                    if (!isAvailable && room.booked_times.length > 0) {
+                        bookedTimesHtml = '<p class="mb-2"><strong><i class="fa fa-clock text-danger me-2"></i>Booked Times:</strong></p><ul class="list-unstyled">';
+                        room.booked_times.forEach(function(time) {
+                            bookedTimesHtml += '<li class="text-danger"><i class="fa fa-times-circle me-2"></i>' + time + '</li>';
+                        });
+                        bookedTimesHtml += '</ul>';
+                    }
+                    let buttonStyle = isAvailable ? 'background: linear-gradient(135deg, #198754, #146c43);' : 'background: linear-gradient(135deg, #dc3545, #b02a37);';
+                    let icon = isAvailable ? '🏢' : '🚫';
+                    let radioDisabled = isAvailable ? '' : 'disabled';
+                    let labelText = isAvailable ? '✅ Select This Room' : '❌ Not Available';
+                    let labelClass = isAvailable ? 'text-success' : 'text-danger';
                     html += `
                     <div class="accordion-item bg-dark text-white border-0 rounded mb-3 shadow-sm">
                         <h2 class="accordion-header" id="heading${room.id_ruangan}">
@@ -181,8 +195,8 @@
                                     data-bs-target="#collapse${room.id_ruangan}" 
                                     aria-expanded="false" 
                                     aria-controls="collapse${room.id_ruangan}"
-                                    style="background: linear-gradient(135deg, #198754, #146c43);">
-                                🏢 ${room.nama_ruangan}
+                                    style="${buttonStyle}">
+                                ${icon} ${room.nama_ruangan} ${isAvailable ? '(Available)' : '(Booked)'}
                             </button>
                         </h2>
                         <div id="collapse${room.id_ruangan}" class="accordion-collapse collapse"
@@ -204,14 +218,16 @@
                                             <strong><i class="fa fa-users text-success me-2"></i>Capacity:</strong>
                                             ${room.kapasitas} people
                                         </p>
+                                        ${bookedTimesHtml}
                                         <div class="form-check my-3">
                                             <input class="form-check-input border-success" type="radio" 
                                                 name="selected_room" 
                                                 id="room${room.id_ruangan}" 
                                                 value="${room.id_ruangan}" 
+                                                ${radioDisabled}
                                                 style="transform: scale(1.3);">
-                                            <label class="form-check-label fw-bold text-success ms-2" for="room${room.id_ruangan}">
-                                                ✅ Select This Room
+                                            <label class="form-check-label fw-bold ${labelClass} ms-2" for="room${room.id_ruangan}">
+                                                ${labelText}
                                             </label>
                                         </div>
                                     </div>

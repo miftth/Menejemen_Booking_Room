@@ -30,7 +30,7 @@ class Dashboard extends CI_Controller {
         $ignore_booking = $this->input->post('ignore_booking');
 
         $rooms = $this->room->get_all_rooms();
-        $available_rooms = [];
+        $result_rooms = [];
         $start_time_obj = new DateTime($start_time);
         $start_time_new = $start_time_obj->modify('+1 minute')->format('H:i');
 
@@ -51,12 +51,31 @@ class Dashboard extends CI_Controller {
 
             $conflict = $this->db->get('tb_booking')->num_rows();
 
-            if ($conflict == 0) {
-                $available_rooms[] = $room;
+            $booked_times = [];
+            if ($conflict > 0) {
+                // Get booked times for this room on this date
+                $this->db->select('start_time, end_time, name');
+                $this->db->where('room_id', $room['id_ruangan']);
+                $this->db->where('date', $date);
+                if ($ignore_booking) {
+                    $this->db->where('id_booking !=', $ignore_booking);
+                }
+                $bookings = $this->db->get('tb_booking')->result_array();
+                // Sort bookings by start_time ascending (nearest time first)
+                usort($bookings, function($a, $b) {
+                    return strtotime($a['start_time']) <=> strtotime($b['start_time']);
+                });
+                foreach ($bookings as $booking) {
+                    $booked_times[] = $booking['start_time'] . ' - ' . $booking['end_time'] . ' (' . $booking['name'] . ')';
+                }
             }
+
+            $room['available'] = ($conflict == 0);
+            $room['booked_times'] = $booked_times;
+            $result_rooms[] = $room;
         }
 
-        echo json_encode($available_rooms);
+        echo json_encode($result_rooms);
     }
     public function proses_booking() {
         $this->form_validation->set_rules('name', 'Name', 'required|trim');
