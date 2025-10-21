@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `menejemen_booking_room`
+-- Database: `menejemen_booking_roo`
 --
 
 -- --------------------------------------------------------
@@ -42,14 +42,6 @@ CREATE TABLE `tb_booking` (
   `sisa_update` int(1) NOT NULL DEFAULT 3,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tb_booking`
---
-
-INSERT INTO `tb_booking` (`id_booking`, `code_booking`, `name`, `email`, `date`, `start_time`, `end_time`, `room_id`, `ip_address`, `token`, `status`, `sisa_update`, `created_at`) VALUES
-(1, '$2y$10$hHiYNEWNTCNniYEK3cjgzOoazMSttOrtktQ57EWeuYyj63liNgaYW', 'Miftah Khaiulah W', 'miftaharul80@outlook.com', '2025-10-20', '13:00:00', '17:00:00', 2001, '192.168.101.05', '458ebd488cb7eaa5ebf0b8d41abe8eb6', 'upcoming', 3, '2025-10-20 09:42:18'),
-(2, '$2y$10$KMytGAmVWSjg0qqqzQnqgOCTCj/GIom3/GgNNqUUD5bR2OxpDa3Eu', 'Syansa', 'miftaharul80@outlook.com', '2025-10-21', '09:00:00', '12:00:00', 2002, '192.168.101.05', '2a7816e76fbb7d7f21851a87e6fe9b7b', 'upcoming', 2, '2025-10-20 10:30:13');
 
 -- --------------------------------------------------------
 
