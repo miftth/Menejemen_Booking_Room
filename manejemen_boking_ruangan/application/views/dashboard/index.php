@@ -134,7 +134,9 @@
         noCalendar: true,
         dateFormat: "H:i",
         disableMobile: "true",
-        time_24hr: true
+        time_24hr: true,
+        minTime: "08:00",
+        maxTime: "17:00"
     });
     function resetRescheduleForm() {
         document.getElementById('date').value = '';
@@ -168,6 +170,15 @@
         .then(res => res.json())
         .then(data => {
             let html = '';
+            if (data.error) {
+                html = `<div class="alert alert-danger text-center fw-bold">
+                            <i class="fa fa-exclamation-triangle me-2"></i>${data.error}
+                        </div>`;
+                document.getElementById('roomsAccordion').innerHTML = html;
+                let collapse = bootstrap.Collapse.getOrCreateInstance(document.getElementById('availableRooms'));
+                collapse.show();
+                return; 
+            }
             if (data.length === 0) {
                 html = '<div class="alert alert-warning text-center">No rooms found.</div>';
             } else {

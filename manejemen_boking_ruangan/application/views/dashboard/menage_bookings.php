@@ -33,40 +33,27 @@
 ?>
     <script src="<?= base_url('assets/js/chart.umd.min.js');?>"></script>
     <style>
-        :root{ --bg-900: #05060b; --bg-800: #0b1120; --glass: rgba(255,255,255,0.03); --glass-2: rgba(255,255,255,0.025); --glass-border: rgba(255,255,255,0.06); --muted: #9aa4b2; --accent-cyan: #5ee8ff; --accent-purple: #a78bfa; --accent-green: #3ee89a; --card-shadow: 0 12px 40px rgba(2,6,23,0.6); --text-primary: #e6eef8; --text-secondary: #9aa4b2; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+        :root { --bg-900: #05060b; --bg-800: #0b1120; --glass: rgba(255,255,255,0.03); --glass-2: rgba(255,255,255,0.025); --glass-border: rgba(255,255,255,0.06); --muted: #9aa4b2; --accent-cyan: #5ee8ff; --accent-purple: #a78bfa; --accent-green: #3ee89a; --card-shadow: 0 12px 40px rgba(2,6,23,0.6); --text-primary: #e6eef8; --text-secondary: #9aa4b2; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
         .light-mode { --bg-900: #ffffff; --bg-800: #f8f9fa; --glass: rgba(0,0,0,0.02); --glass-2: rgba(0,0,0,0.01); --glass-border: rgba(0,0,0,0.08); --muted: #6c757d; --accent-cyan: #0dcaf0; --accent-purple: #6f42c1; --accent-green: #198754; --card-shadow: 0 12px 40px rgba(0,0,0,0.1); --text-primary: #212529; --text-secondary: #6c757d; }
         html,body { height:100%; color: var(--text-primary); margin:0; padding:0; transition: background-color 0.3s ease, color 0.3s ease; }
         .wrap { max-width:1200px; margin:28px auto; padding:22px; border-radius:16px; border:1px solid var(--glass-border); background-color: var(--bg-800); box-shadow: var(--card-shadow); backdrop-filter: blur(8px) saturate(120%); }
-        header { display:flex; align-items:center; margin-bottom:18px; }
+        header { display:flex; align-items:center; margin-bottom:18px;}
         .brand { display:flex; align-items:center; gap:12px; }
         .brand .logo { width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); display:flex; align-items:center; justify-content:center; color:#031124; font-weight:800; font-size:20px; box-shadow: 0 10px 30px rgba(94,232,255,0.06); }
         .brand h1 { margin:0; font-size:1.05rem; font-weight:800; letter-spacing:0.2px; }
         .brand p { margin:0; color:var(--muted); font-size:0.85rem; }
         .header-actions { display:flex; gap:30px; align-items:center; margin-left:auto; }
-        .kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
         .card-glass { padding:14px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); box-shadow: 0 8px 30px rgba(2,6,23,0.6); }
-        .kpi { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-        .kpi .left { display:flex; gap:12px; align-items:center; }
-        .kpi .icon { width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); }
-        .kpi .value { font-weight:800; font-size:1.6rem; color:#fff; }
-        .kpi .label { color:var(--muted); font-size:0.85rem; }
-        .grid { display:grid; grid-template-columns: 1fr 420px; gap:14px; align-items:start; }
-        @media (max-width:1100px){
-            .grid { grid-template-columns: 1fr; }
-            .kpi-row { grid-template-columns:repeat(1,1fr); }
-        }
-        .small-card { padding:12px; border-radius:10px;, background-color: var(--bg-800); border:1px solid var(--glass-border); }
+        .small-card { padding:12px; border-radius:10px; background-color: var(--bg-800); border:1px solid var(--glass-border); }
         .table-wrap { margin-top:12px; border-radius:12px; overflow:hidden; border:1px solid var(--glass-border); }
         table { border-collapse:collapse; width:100%; }
         thead th { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color: #e6fdf6; font-weight:700; border-bottom:1px solid rgba(255,255,255,0.03); padding:12px 14px; text-align:left; font-size:0.85rem; }
         tbody td { padding:12px 14px; font-size:0.9rem; border-bottom:1px dashed rgba(255,255,255,0.02); vertical-align:middle; }
         tbody tr { transition: transform .12s ease, background .12s ease, box-shadow .12s ease; }
-        tbody tr:hover { transform: translateY(-6px); background: linear-gradient(90deg, rgba(94,232,255,0.02), rgba(167,139,250,0.01)); box-shadow: 0 10px 30px rgba(94,232,255,0.03); }
         .badge-status { padding:6px 10px; border-radius:999px; font-weight:700; font-size:0.82rem; display:inline-block; box-shadow: 0 6px 30px rgba(2,6,23,0.6) inset; }
-        .badge-upcoming { background: linear-gradient(90deg, #ffcf6e, #ffb347); color: #111; box-shadow: none !important;text-shadow: none !important; }
-        .badge-ongoing { background: linear-gradient(90deg, #3ee89a, #14c77a); color: #051220;   box-shadow: none !important;  text-shadow: none !important; }
-        .badge-finished { background: linear-gradient(90deg, #3c6fb6ff, #5582ddff); color: #fff;   box-shadow: none !important;  text-shadow: none !important; }
-        .btn-action { border-radius:10px; padding:6px 8px; border:1px solid rgba(255,255,255,0.03); background:transparent; color:#dff6f5; }
+        .badge-upcoming { background: linear-gradient(90deg, #ffcf6e, #ffb347); color: #111; box-shadow:none !important; }
+        .badge-ongoing { background: linear-gradient(90deg, #3ee89a, #14c77a); color: #051220; box-shadow:none !important; }
+        .badge-finished { background: linear-gradient(90deg, #3c6fb6ff, #5582ddff); color: #fff; box-shadow:none !important; }
         .filters { display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
         .filters .form-control, .filters .form-select { background:transparent; color:#dff6f5; border:1px solid rgba(255,255,255,0.03); }
         .search-wrap { display:flex; align-items:center; gap:8px; background:var(--glass); border-radius:10px; padding:8px 10px; border:1px solid var(--glass-border); }
@@ -74,11 +61,12 @@
         .muted-small { color:var(--muted); font-size:0.8rem; }
         .float-up { transform: translateY(8px); opacity:0; }
         .float-up.show { transform: translateY(0); opacity:1; transition:all .6s cubic-bezier(.2,.9,.3,1); }
-        
         .canvas-wrap { flex: 0 0 auto; }
         .list-scroll { max-height:120px; overflow:auto; }
-        .dateFilter::placeholder{ color:#FFF; opacity: 1;}
-        #bookingStatusChart { width: 80%;   height: 200px;  margin: 0 auto; 
+        .dateFilter::placeholder { color:#FFF; opacity: 1; }
+        #bookingStatusChart { width:80%; height:200px; margin:0 auto; }
+        @media (max-width:1100px){
+        .filters { flex-direction:column; align-items:flex-start; }
         }
     </style>
         <div class="wrap">
@@ -90,7 +78,7 @@
                         <p><?= date('Y'); ?></p>
                     </div>
                 </div>
-                <div class="header-actions">
+                <div class="header-actions d-none d-lg-flex">
                     <div class="search-wrap" title="Search (press /)">
                         <i class="fa-solid fa-magnifying-glass" style="color:var(--muted)"></i>
                         <input id="globalSearch" placeholder="Cari ruangan, nama, fasilitas, tanggal..." />
@@ -108,12 +96,12 @@
             <div class="row my-4 g-3">
                 <div class="col-md-4">
                     <div class="card-glass p-3 d-flex align-items-center gap-3 float-up">
-                        <div class="icon" style="background: linear-gradient(135deg, rgba(94,232,255,0.08), rgba(167,139,250,0.06));">
+                        <div style="background: linear-gradient(135deg, rgba(94,232,255,0.08), rgba(167,139,250,0.06));">
                             <i class="fa-solid fa-list-check bg-transparent" style="color:var(--accent-cyan); font-size:20px;"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <div class="label fw-bold ">Total Bookings</div>
-                            <div class="value fs-4 fw-bold"><?= e($total_booking); ?></div>
+                            <div class="fw-bold ">Total Bookings</div>
+                            <div class="fs-4 fw-bold"><?= e($total_booking); ?></div>
                             <div class="muted-small">Favorite: <?= e($favorite_room); ?></div>
                         </div>
                     </div>
@@ -121,12 +109,12 @@
                 <div class="col-md-4">
                     <div class="card-glass p-3 d-flex justify-content-between align-items-center float-up">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="icon" style="background: linear-gradient(135deg, rgba(255,191,105,0.05), rgba(255,140,140,0.03));">
+                            <div style="background: linear-gradient(135deg, rgba(255,191,105,0.05), rgba(255,140,140,0.03));">
                               <i class="fa-solid fa-door-open bg-transparent" style="color:#ffd19a; font-size:20px;"></i>
                             </div>
                             <div>
-                                <div class="label fw-bold ">Total Rooms</div>
-                                <div class="value fs-4 fw-bold"><?= e($total_room); ?></div>
+                                <div class="fw-bold ">Total Rooms</div>
+                                <div class="fs-4 fw-bold"><?= e($total_room); ?></div>
                                 <div class="muted-small">Favorite: <?= e($favorite_room); ?></div>
                             </div>
                         </div>
@@ -139,12 +127,12 @@
                 <div class="col-md-4">
                     <div class="card-glass p-3 d-flex justify-content-between align-items-center float-up">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="icon" style="background: linear-gradient(135deg, rgba(62,232,154,0.05), rgba(94,232,255,0.03));">
+                            <div style="background: linear-gradient(135deg, rgba(62,232,154,0.05), rgba(94,232,255,0.03));">
                                 <i class="fa-solid fa-chart-pie bg-transparent" style="color:var(--accent-green); font-size:20px;"></i>
                             </div>
                             <div>
-                                <div class="label fw-bold ">Status Overview</div>
-                                <div class="value fs-4 fw-bold"><?= e($status_counts['ongoing']); ?> / <?= e($status_counts['upcoming']); ?></div>
+                                <div class="fw-bold ">Status Overview</div>
+                                <div class="fs-4 fw-bold"><?= e($status_counts['upcoming']); ?> / <?= e($status_counts['ongoing']); ?></div>
                                 <div class="muted-small"><?= e($status_counts['finished']); ?> finished</div>
                             </div>
                         </div>
@@ -239,19 +227,19 @@
                         <button id="exportToExcel" class="btn btn-sm btn-outline-light" onclick="exportBookingTableToExcel()"><i class="fa fa-file-excel"></i> Export to Excel</button>
                     </div>
                 </div>
-                <div class="table-wrap">
-                    <table id="bookingTable">
+                <div class="table-wrap" style="overflow-x:auto;">
+                    <table id="bookingTable" class="table-responsive">
                         <thead>
                             <tr>
                                 <th style="width:60px">#</th>
                                 <th>Room</th>
                                 <th>Capacity</th>
-                                <th>Facilities</th>
+                                <th class="d-none d-lg-flex">Facilities</th>
                                 <th>Name</th>
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Status</th>
-                                <!--<th style="width:120px">Action</th>-->
+                                <th style="width:120px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -265,7 +253,7 @@
                                     <td><?= $i+1; ?></td>
                                     <td class="fw-semibold"><?= e($b->nama_ruangan ?? ''); ?></td>
                                     <td><?= e($b->kapasitas ?? '-'); ?></td>
-                                    <td><?= e($b->fasilitas ?? '-'); ?></td>
+                                    <td class="d-none d-lg-flex"><?= e($b->fasilitas ?? '-'); ?></td>
                                     <td><?= e($b->name ?? '-'); ?></td>
                                     <td><?= e(date('d M Y', strtotime($b->date ?? ''))); ?></td>
                                     <td><?= e(date('H:i', strtotime($b->start_time ?? ''))).' - '.e(date('H:i', strtotime($b->end_time ?? ''))); ?></td>
@@ -278,10 +266,10 @@
                                             <span class="badge-status badge-finished">Finished</span>
                                         <?php endif; ?>
                                     </td>
-                                <!--<td>
-                                        <a href="<?= e(base_url('dashboard/edit_booking/'.($b->id_booking ?? ''))); ?>" class="btn-action" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= e(base_url('dashboard/delete_booking/'.($b->id_booking ?? ''))); ?>" class="btn-action" onclick="return confirm('Delete this booking?');" title="Delete" style="margin-left:6px; border-color:rgba(255,0,80,0.12);"><i class="fa-solid fa-trash" style="color:#ff8aa1"></i></a>
-                                    </td>-->
+                                <td>
+                                        <a href="<?= e(base_url('dashboard/edit_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <a href="<?= e(base_url('dashboard/delete_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this booking?');" title="Delete" style="margin-left:6px; border-color:rgba(255,0,80,0.12);"><i class="fa-solid fa-trash" style="color:#ff8aa1"></i></a>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                             <?php if(count($bookings)===0): ?>
@@ -295,7 +283,7 @@
         <script src="<?= base_url('assets/js/exceljs.min.js'); ?>"></script>
         <script src="<?= base_url('assets/js/FileSaver.min.js'); ?>"></script>
         <script src="<?= base_url('assets/js/xlsx.full.min.js'); ?>"></script>
-        <script src="<?= base_url('assets/js/flatpickr.js');?>"></script>
+        <script src="<?= base_url('assets/js/flatpickr.js'); ?>"></script>
         <script>
             flatpickr(".dateFilter", {
                 dateFormat: "Y-m-d",

@@ -29,31 +29,47 @@ class Dashboard extends CI_Controller {
         $end_time = $this->input->post('end_time');
         $ignore_booking = $this->input->post('ignore_booking');
 
+        $min_time = '08:00';
+        $max_time = '17:00';
+
+        $start_time_obj = new DateTime($start_time);
+        $end_time_obj = new DateTime($end_time);
+        $min_obj = new DateTime($min_time);
+        $max_obj = new DateTime($max_time);
+
+        if ($start_time_obj < $min_obj || $end_time_obj > $max_obj) {
+            echo json_encode(['error' => 'Time must be between 08:00 and 17:00.']);
+            return;
+        }
+
+        if ($end_time_obj <= $start_time_obj) {
+            echo json_encode(['error' => 'The hour/time you entered is invalid.']);
+            return;
+        }
+
         $rooms = $this->room->get_all_rooms();
         $result_rooms = [];
-        $start_time_obj = new DateTime($start_time);
         $start_time_new = $start_time_obj->modify('+1 minute')->format('H:i');
 
         foreach ($rooms as $room) {
             $this->db->where('room_id', $room['id_ruangan'])
-                ->where('date', $date);
+                    ->where('date', $date);
 
             if ($ignore_booking) {
                 $this->db->where('id_booking !=', $ignore_booking);
             }
 
             $this->db->group_start()
-                ->where("('$start_time_new' BETWEEN start_time AND end_time)")
-                ->or_where("('$end_time' BETWEEN start_time AND end_time)")
-                ->or_where("(start_time BETWEEN '$start_time_new' AND '$end_time')")
-                ->or_where("(end_time BETWEEN '$start_time_new' AND '$end_time')")
-            ->group_end();
+                    ->where("('$start_time_new' BETWEEN start_time AND end_time)")
+                    ->or_where("('$end_time' BETWEEN start_time AND end_time)")
+                    ->or_where("(start_time BETWEEN '$start_time_new' AND '$end_time')")
+                    ->or_where("(end_time BETWEEN '$start_time_new' AND '$end_time')")
+                    ->group_end();
 
             $conflict = $this->db->get('tb_booking')->num_rows();
 
             $booked_times = [];
             if ($conflict > 0) {
-                // Get booked times for this room on this date
                 $this->db->select('start_time, end_time, name');
                 $this->db->where('room_id', $room['id_ruangan']);
                 $this->db->where('date', $date);
@@ -61,12 +77,11 @@ class Dashboard extends CI_Controller {
                     $this->db->where('id_booking !=', $ignore_booking);
                 }
                 $bookings = $this->db->get('tb_booking')->result_array();
-                // Sort bookings by start_time ascending (nearest time first)
                 usort($bookings, function($a, $b) {
                     return strtotime($a['start_time']) <=> strtotime($b['start_time']);
                 });
                 foreach ($bookings as $booking) {
-                    $booked_times[] = $booking['start_time'] . ' - ' . $booking['end_time'] . ' (' . $booking['name'] . ')';
+                    $booked_times[] = strftime('%H:%M', strtotime($booking['start_time'])) . ' - ' . strftime('%H:%M', strtotime($booking['end_time'])) . ' (' . $booking['name'] . ')';
                 }
             }
 
