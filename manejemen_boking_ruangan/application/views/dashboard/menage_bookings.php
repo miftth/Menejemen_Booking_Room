@@ -30,6 +30,9 @@
     }, $stats_room));
     $js_stats_month = json_encode(array_values($stats_month));
     $js_status_counts = json_encode($status_counts);
+    $years = array_unique(array_map(function($b){ return date('Y', strtotime($b->date ?? '')); }, $bookings));
+    $years = array_unique(array_merge($years, [date('Y')]));
+    rsort($years);
 ?>
     <script src="<?= base_url('assets/js/chart.umd.min.js');?>"></script>
     <style>
@@ -65,6 +68,8 @@
         .list-scroll { max-height:120px; overflow:auto; }
         .dateFilter::placeholder { color:#FFF; opacity: 1; }
         #bookingStatusChart { width:80%; height:200px; margin:0 auto; }
+        #toggleDarkMode { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--glass-border); background: var(--glass); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; font-size: 1.2rem; }
+        #toggleDarkMode:hover { transform: scale(1.1); color: #000; }
         @media (max-width:1100px){
         .filters { flex-direction:column; align-items:flex-start; }
         }
@@ -212,7 +217,7 @@
                         <option class="text-black" value="ongoing">Ongoing</option>
                         <option class="text-black" value="finished">Finished</option>
                     </select>
-                    <select id="roomFilter" class="form-select form-select-sm" style="width:220px;">
+                    <select id="roomFilter" class="form-select form-select-sm" style="width:160px;">
                         <option value="all" class="text-black">All Rooms</option>
                         <?php foreach($rooms as $r):
                             $name = is_array($r) ? ($r['nama_ruangan'] ?? '') : ($r->nama_ruangan ?? '');
@@ -220,7 +225,28 @@
                             <option value="<?= e($name); ?>" class="text-black"><?= e($name); ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <input id="dateFilter" class="form-control form-control-sm w-25 dateFilter" style="width:160px;" placeholder="Enter Date" />
+                    <select id="yearFilter" class="form-select form-select-sm" style="width:120px;">
+                        <option value="all" class="text-black">All Years</option>
+                        <?php foreach($years as $year): ?>
+                            <option value="<?= e($year); ?>" class="text-black"><?= e($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <select id="mouthFilter" class="form-select form-select-sm" style="width:160px;">
+                        <option value="all" class="text-black">All Months</option>
+                        <option value="january" class="text-black">January</option>
+                        <option value="february" class="text-black">February</option>
+                        <option value="march" class="text-black">March</option>
+                        <option value="april" class="text-black">April</option>
+                        <option value="may" class="text-black">May</option>
+                        <option value="june" class="text-black">June</option>
+                        <option value="july" class="text-black">July</option>
+                        <option value="august" class="text-black">August</option>
+                        <option value="september" class="text-black">September</option>
+                        <option value="october" class="text-black">October</option>
+                        <option value="november" class="text-black">November</option>
+                        <option value="december" class="text-black">December</option>
+                    </select>
+                    <input id="dateFilter" class="form-control form-control-sm w-15 dateFilter" placeholder="Enter Date" />
                     <div style="display:flex; gap:8px;">
                         <button id="applyFilter" class="btn btn-sm btn-outline-light">Apply</button>
                         <button id="resetFilter" class="btn btn-sm btn-outline-light">Reset</button>
@@ -234,12 +260,11 @@
                                 <th style="width:60px">#</th>
                                 <th>Room</th>
                                 <th>Capacity</th>
-                                <th class="d-none d-lg-flex">Facilities</th>
                                 <th>Name</th>
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Status</th>
-                                <th style="width:120px">Action</th>
+                                <th style="width:160px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -249,11 +274,10 @@
                                 $end = strtotime($b->date . ' ' . $b->end_time);
                                 $status = ($now < $start) ? 'upcoming' : (($now >= $start && $now <= $end) ? 'ongoing' : 'finished');
                             ?>
-                                <tr data-status="<?= e($status); ?>" data-room="<?= e($b->nama_ruangan ?? ''); ?>" data-date="<?= e($b->date ?? ''); ?>" data-name="<?= e($b->name ?? ''); ?>">
+                                <tr data-status="<?= e($status); ?>" data-room="<?= e($b->nama_ruangan ?? ''); ?>" data-date="<?= e(date('d F Y', strtotime($b->date ?? ''))); ?>" data-name="<?= e($b->name ?? ''); ?>">
                                     <td><?= $i+1; ?></td>
                                     <td class="fw-semibold"><?= e($b->nama_ruangan ?? ''); ?></td>
                                     <td><?= e($b->kapasitas ?? '-'); ?></td>
-                                    <td class="d-none d-lg-flex"><?= e($b->fasilitas ?? '-'); ?></td>
                                     <td><?= e($b->name ?? '-'); ?></td>
                                     <td><?= e(date('d M Y', strtotime($b->date ?? ''))); ?></td>
                                     <td><?= e(date('H:i', strtotime($b->start_time ?? ''))).' - '.e(date('H:i', strtotime($b->end_time ?? ''))); ?></td>
@@ -266,9 +290,10 @@
                                             <span class="badge-status badge-finished">Finished</span>
                                         <?php endif; ?>
                                     </td>
-                                <td>
-                                        <a href="<?= e(base_url('dashboard/edit_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= e(base_url('dashboard/delete_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this booking?');" title="Delete" style="margin-left:6px; border-color:rgba(255,0,80,0.12);"><i class="fa-solid fa-trash" style="color:#ff8aa1"></i></a>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#detailModal<?= e($b->id_booking ?? ''); ?>" title="Detail"><i class="fa-solid fa-eye"></i></button>
+                                        <a href="<?= e(base_url('dashboard/edit_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-outline-success me-1" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <a href="<?= e(base_url('dashboard/delete_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-outline-danger"  title="Delete"><i class="fa-solid fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -280,6 +305,38 @@
                 </div>
             </div>
         </div>
+        <?php foreach($bookings as $b): ?>
+            <div class="modal fade" id="detailModal<?= e($b->id_booking ?? ''); ?>" tabindex="-1" aria-labelledby="detailModalLabel<?= e($b->id_booking ?? ''); ?>" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content shadow-lg border-0">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="detailModalLabel<?= e($b->id_booking ?? ''); ?>">
+                                <i class="fa-solid fa-circle-info me-2"></i> Full Booking Details
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <ul class="list-group">
+                                <li class="list-group-item"><strong>Name:</strong> <?= e($b->name ?? '-'); ?></li>
+                                <li class="list-group-item"><strong>Email:</strong> <?= e($b->email ?? '-'); ?></li>
+                                <li class="list-group-item"><strong>Room:</strong> <?= e($b->nama_ruangan ?? '-'); ?></li>
+                                <li class="list-group-item"><strong>Facilities:</strong> <?= e($b->fasilitas ?? '-'); ?></li>
+                                <li class="list-group-item"><strong>Date:</strong> <?= e(strftime('%d %B %Y', strtotime($b->date ?? ''))); ?></li>
+                                <li class="list-group-item"><strong>Time:</strong> <?= e(date('H:i', strtotime($b->start_time ?? ''))); ?> - <?= e(date('H:i', strtotime($b->end_time ?? ''))); ?></li>
+                                <li class="list-group-item"><strong>Capacity:</strong> <?= e($b->kapasitas ?? '-'); ?> people</li>
+                                <li class="list-group-item"><strong>Room IP Address:</strong> <?= e($b->ip_address ?? '-'); ?></li>
+                            </ul>
+                        </div>
+                        <div class="modal-footer bg-light">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fa-solid fa-xmark me-1"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+        <script src="<?= base_url('assets/js/bootstrap.bundle.min.js'); ?>"></script>
         <script src="<?= base_url('assets/js/exceljs.min.js'); ?>"></script>
         <script src="<?= base_url('assets/js/FileSaver.min.js'); ?>"></script>
         <script src="<?= base_url('assets/js/xlsx.full.min.js'); ?>"></script>
@@ -460,6 +517,8 @@
             const bookingTable = document.getElementById('bookingTable');
             const statusFilter = document.getElementById('statusFilter');
             const roomFilter = document.getElementById('roomFilter');
+            const mouthFilter = document.getElementById('mouthFilter');
+            const yearFilter = document.getElementById('yearFilter');
             const dateFilter = document.getElementById('dateFilter');
             const applyFilter = document.getElementById('applyFilter');
             const resetFilter = document.getElementById('resetFilter');
@@ -469,6 +528,8 @@
             function filterTable(){
                 const s = statusFilter.value;
                 const r = roomFilter.value;
+                const m = mouthFilter.value;
+                const y = yearFilter.value;
                 const d = dateFilter.value.trim();
                 const q = (globalSearch.value || '').trim().toLowerCase();
                 const rows = bookingTable.querySelectorAll('tbody tr');
@@ -480,11 +541,15 @@
                     const rd = row.dataset.date || '';
                     const rn = row.dataset.name || '';
                     const text = (row.innerText + ' ' + rr + ' ' + rn + ' ' + rd).toLowerCase();
+                    const month = rd.split(' ')[1] ? rd.split(' ')[1].toLowerCase() : '';
+                    const year = rd.split(' ')[2] ? rd.split(' ')[2] : '';
                     const okStatus = (s === 'all' || rs === s);
                     const okRoom = (r === 'all' || rr === r);
+                    const okMonth = (m === 'all' || month === m);
+                    const okYear = (y === 'all' || year === y);
                     const okDate = (d === '' || rd === d);
                     const okQuery = (q === '' || text.indexOf(q) !== -1);
-                    if(okStatus && okRoom && okDate && okQuery){
+                    if(okStatus && okRoom && okMonth && okYear && okDate && okQuery){
                         row.style.display = '';
                         visible++;
                     } else row.style.display = 'none';
@@ -498,10 +563,12 @@
             }
             applyFilter.addEventListener('click', filterTable);
             resetFilter.addEventListener('click', ()=> {
-                statusFilter.value='all'; roomFilter.value='all'; dateFilter.value=''; globalSearch.value=''; filterTable();
+                statusFilter.value='all'; roomFilter.value='all'; mouthFilter.value='all'; yearFilter.value='all'; dateFilter.value=''; globalSearch.value=''; filterTable();
             });
             statusFilter.addEventListener('change', filterTable);
             roomFilter.addEventListener('change', filterTable);
+            mouthFilter.addEventListener('change', filterTable);
+            yearFilter.addEventListener('change', filterTable);
             globalSearch.addEventListener('input', filterTable);
             clearSearch.addEventListener('click', ()=> { globalSearch.value=''; filterTable(); });
             function downloadCSV(filename, rows){
@@ -520,6 +587,32 @@
                 if(e.key === '/') { e.preventDefault(); globalSearch.focus(); }
             });
             filterTable();
+
+            const toggleButton = document.getElementById('toggleDarkMode');
+            const htmlElement = document.documentElement;
+            const iconElement = toggleButton.querySelector('i');
+
+            function applyMode(isLight) {
+                if (isLight) {
+                    htmlElement.classList.add('light-mode');
+                    iconElement.className = 'fa-solid fa-sun';
+                    toggleButton.title = 'Toggle dark mode';
+                } else {
+                    htmlElement.classList.remove('light-mode');
+                    iconElement.className = 'fa-solid fa-moon';
+                    toggleButton.title = 'Toggle light mode';
+                }
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            const isLightMode = savedTheme === 'light';
+            applyMode(isLightMode);
+
+            toggleButton.addEventListener('click', () => {
+                const currentIsLight = htmlElement.classList.contains('light-mode');
+                applyMode(!currentIsLight);
+            });
         </script>
     </body>
 </html>
