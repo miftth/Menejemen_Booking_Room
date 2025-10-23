@@ -36,42 +36,512 @@
 ?>
     <script src="<?= base_url('assets/js/chart.umd.min.js');?>"></script>
     <style>
-        :root { --bg-900: #05060b; --bg-800: #0b1120; --glass: rgba(255,255,255,0.03); --glass-2: rgba(255,255,255,0.025); --glass-border: rgba(255,255,255,0.06); --muted: #9aa4b2; --accent-cyan: #5ee8ff; --accent-purple: #a78bfa; --accent-green: #3ee89a; --card-shadow: 0 12px 40px rgba(2,6,23,0.6); --text-primary: #e6eef8; --text-secondary: #9aa4b2; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-        .light-mode { --bg-900: #ffffff; --bg-800: #f8f9fa; --glass: rgba(0,0,0,0.02); --glass-2: rgba(0,0,0,0.01); --glass-border: rgba(0,0,0,0.08); --muted: #6c757d; --accent-cyan: #0dcaf0; --accent-purple: #6f42c1; --accent-green: #198754; --card-shadow: 0 12px 40px rgba(0,0,0,0.1); --text-primary: #212529; --text-secondary: #6c757d; }
-        html,body { height:100%; color: var(--text-primary); margin:0; padding:0; transition: background-color 0.3s ease, color 0.3s ease; }
-        .wrap { max-width:1200px; margin:28px auto; padding:22px; border-radius:16px; border:1px solid var(--glass-border); background-color: var(--bg-800); box-shadow: var(--card-shadow); backdrop-filter: blur(8px) saturate(120%); }
-        header { display:flex; align-items:center; margin-bottom:18px;}
-        .brand { display:flex; align-items:center; gap:12px; }
-        .brand .logo { width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); display:flex; align-items:center; justify-content:center; color:#031124; font-weight:800; font-size:20px; box-shadow: 0 10px 30px rgba(94,232,255,0.06); }
-        .brand h1 { margin:0; font-size:1.05rem; font-weight:800; letter-spacing:0.2px; }
-        .brand p { margin:0; color:var(--muted); font-size:0.85rem; }
-        .header-actions { display:flex; gap:30px; align-items:center; margin-left:auto; }
-        .card-glass { padding:14px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); box-shadow: 0 8px 30px rgba(2,6,23,0.6); }
-        .small-card { padding:12px; border-radius:10px; background-color: var(--bg-800); border:1px solid var(--glass-border); }
-        .table-wrap { margin-top:12px; border-radius:12px; overflow:hidden; border:1px solid var(--glass-border); }
-        table { border-collapse:collapse; width:100%; }
-        thead th { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color: #e6fdf6; font-weight:700; border-bottom:1px solid rgba(255,255,255,0.03); padding:12px 14px; text-align:left; font-size:0.85rem; }
-        tbody td { padding:12px 14px; font-size:0.9rem; border-bottom:1px dashed rgba(255,255,255,0.02); vertical-align:middle; }
-        tbody tr { transition: transform .12s ease, background .12s ease, box-shadow .12s ease; }
-        .badge-status { padding:6px 10px; border-radius:999px; font-weight:700; font-size:0.82rem; display:inline-block; box-shadow: 0 6px 30px rgba(2,6,23,0.6) inset; }
-        .badge-upcoming { background: linear-gradient(90deg, #ffcf6e, #ffb347); color: #111; box-shadow:none !important; }
-        .badge-ongoing { background: linear-gradient(90deg, #3ee89a, #14c77a); color: #051220; box-shadow:none !important; }
-        .badge-finished { background: linear-gradient(90deg, #3c6fb6ff, #5582ddff); color: #fff; box-shadow:none !important; }
-        .filters { display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
-        .filters .form-control, .filters .form-select { background:transparent; color:#dff6f5; border:1px solid rgba(255,255,255,0.03); }
-        .search-wrap { display:flex; align-items:center; gap:8px; background:var(--glass); border-radius:10px; padding:8px 10px; border:1px solid var(--glass-border); }
-        .search-wrap input { background:transparent; border:0; outline:0; color:#e9fbfb; width:320px; }
-        .muted-small { color:var(--muted); font-size:0.8rem; }
-        .float-up { transform: translateY(8px); opacity:0; }
-        .float-up.show { transform: translateY(0); opacity:1; transition:all .6s cubic-bezier(.2,.9,.3,1); }
-        .canvas-wrap { flex: 0 0 auto; }
-        .list-scroll { max-height:120px; overflow:auto; }
-        .dateFilter::placeholder { color:#FFF; opacity: 1; }
-        #bookingStatusChart { width:80%; height:200px; margin:0 auto; }
-        #toggleDarkMode { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--glass-border); background: var(--glass); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; font-size: 1.2rem; }
-        #toggleDarkMode:hover { transform: scale(1.1); color: #000; }
-        @media (max-width:1100px){
-        .filters { flex-direction:column; align-items:flex-start; }
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #000000;
+            --glass: rgba(166, 166, 166, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --muted: #b0b0b0;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #9c27b0;
+            --accent-green: #4caf50;
+            --accent-orange: #ff9800;
+            --accent-red: #f44336;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --radius: 16px;
+            --transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        .wrap {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 32px;
+            border-radius: var(--radius);
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(20px) saturate(180%);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wrap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-green));
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand .logo {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.2rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .card-glass {
+            padding: 24px;
+            border-radius: var(--radius);
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .small-card {
+            padding: 20px;
+            border-radius: var(--radius);
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .table-wrap {
+            margin-top: 20px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+        }
+
+        thead th {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            color: var(--text-primary);
+            font-weight: 700;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 0.95rem;
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        tbody td {
+            padding: 16px 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-light);
+        }
+
+        .badge-status {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .badge-upcoming {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #212529;
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .badge-ongoing {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 255, 136, 0.3);
+        }
+
+        .badge-finished {
+            background: linear-gradient(135deg, #4dabf7, #228be6);
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(74, 171, 247, 0.3);
+        }
+
+        .filters {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filters .form-control,
+        .filters .form-select {
+            background: var(--glass);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            backdrop-filter: blur(5px);
+            transition: var(--transition);
+        }
+
+        .filters .form-control:focus,
+        .filters .form-select:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .search-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--glass);
+            border-radius: 12px;
+            padding: 10px 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .search-wrap input {
+            background: transparent;
+            border: 0;
+            outline: none;
+            color: var(--text-primary);
+            width: 320px;
+            font-size: 0.95rem;
+        }
+
+        .muted-small {
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .float-up {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .float-up.show {
+            transform: translateY(0);
+            opacity: 1;
+            transition: all 0.8s cubic-bezier(.2,.9,.3,1);
+        }
+
+        .canvas-wrap {
+            flex: 0 0 auto;
+        }
+
+        .list-scroll {
+            max-height: 140px;
+            overflow: auto;
+        }
+
+        .dateFilter::placeholder {
+            color: var(--muted);
+            opacity: 1;
+        }
+
+        #bookingStatusChart {
+            width: 100%;
+            height: 220px;
+            margin: 0 auto;
+        }
+
+        #toggleDarkMode {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        #toggleDarkMode:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.95);
+            color: #000;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 1200px) {
+            .wrap {
+                margin: 20px;
+                padding: 24px;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-wrap input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .wrap {
+                margin: 10px;
+                padding: 16px;
+            }
+
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .brand h1 {
+                font-size: 1.2rem;
+            }
+
+            .card-glass {
+                padding: 16px;
+            }
+
+            .small-card {
+                padding: 16px;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            thead th,
+            tbody td {
+                padding: 8px 12px;
+            }
+        }
+
+        html.light-mode {
+            --bg-primary: linear-gradient(135deg, #929292ff 0%, #8f8f8fff 100%);
+            --bg-secondary: #ffffff;
+            --glass: rgba(220, 220, 220, 0.95);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --muted: #6c757d;
+            --accent-cyan: #00bcd4;
+            --accent-purple: #9c27b0;
+            --accent-green: #4caf50;
+            --accent-orange: #ff9800;
+            --accent-red: #f44336;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        html.light-mode .wrap {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+        }
+
+        html.light-mode .card-glass,
+        html.light-mode .small-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+        }
+
+        html.light-mode .search-wrap,
+        html.light-mode .filters .form-control,
+        html.light-mode .filters .form-select {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        html.light-mode .table-wrap table {
+            background: var(--glass);
+        }
+
+        html.light-mode thead th {
+            background: linear-gradient(135deg, rgba(0,0,0,0.05), rgba(0,0,0,0.02));
+            color: var(--text-primary);
+        }
+
+        html.light-mode tbody td {
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        html.light-mode .badge-status {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        html.light-mode #toggleDarkMode {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        html.light-mode #toggleDarkMode:hover {
+            background: rgba(0,0,0,0.05);
+            color: #000;
+        }
+
+        html.light-mode .list-group-item {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+
+        html.light-mode .list-group-item:nth-child(odd) {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .room-list-item {
+            color: var(--text-primary);
+        }
+
+        .room-name {
+            color: var(--text-primary);
+        }
+
+        .room-count {
+            color: var(--accent-cyan);
+        }
+
+        html.light-mode .btn-outline-dark {
+            color: #333;
+            border-color: #333;
+        }
+
+        html.light-mode .btn-outline-dark:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        html:not(.light-mode) .btn-outline-dark {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        html:not(.light-mode) .btn-outline-dark:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        html.light-mode tbody td {
+            color: #212529;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: 500;
+        }
+
+        html.light-mode thead th {
+            color: #212529;
+            border-bottom: 2px solid #adb5bd;
+            font-weight: 700;
+        }
+
+        html.light-mode tbody tr:hover {
+            background: rgba(0,123,255,0.1);
+        }
+
+        html.light-mode tbody tr:nth-child(even) {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .modal-content {
+            border-radius: var(--radius);
+            border: none;
+            box-shadow: var(--card-shadow);
+        }
+
+        .list-group-item {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(5px);
+        }
+
+        .list-group-item:nth-child(odd) {
+            background: rgba(255,255,255,0.05);
         }
     </style>
         <div class="wrap">
@@ -87,7 +557,7 @@
                     <div class="search-wrap" title="Search (press /)">
                         <i class="fa-solid fa-magnifying-glass" style="color:var(--muted)"></i>
                         <input id="globalSearch" placeholder="Cari ruangan, nama, fasilitas, tanggal..." />
-                        <button id="clearSearch" class="btn btn-sm btn-link" title="Clear"><i class="fa-solid fa-xmark" style="color:var(--muted)"></i></button>
+                        <button id="clearSearch" class="btn btn-sm btn-outline-dark" title="Clear"><i class="fa-solid fa-xmark" style="color:var(--muted)"></i></button>
                     </div>
                     <div style="display:flex; gap:8px; align-items:center;">
                         <div style="padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); background:transparent;">
@@ -96,7 +566,7 @@
                         </div>
                     </div>
                 </div>
-                <button id="toggleDarkMode" class="btn btn-lg btn-outline-light ms-3" title="Toggle dark mode"><i class="fa-solid fa-moon" style="color:var(--muted)"></i></button>
+                <button id="toggleDarkMode" class="btn btn-lg btn-outline-dark ms-3" title="Toggle dark mode"><i class="fa-solid fa-moon" style="color:var(--muted)"></i></button>
             </header>
             <div class="row my-4 g-3">
                 <div class="col-md-4">
@@ -125,7 +595,7 @@
                         </div>
                         <div class="text-end">
                             <div class="muted-small">Top Room</div>
-                            <div class="fw-bold" style="color:var(--accent-purple);"><?= e($favorite_room); ?></div>
+                            <div class="fw-bold" style="color:#F59E0B;"><?= e($favorite_room); ?></div>
                         </div>
                     </div>
                 </div>
@@ -182,9 +652,9 @@
                         <div class="list-scroll mt-3">
                             <ul class="list-unstyled m-0">
                                 <?php foreach(json_decode($js_stats_room, true) as $r): ?>
-                                    <li class="d-flex justify-content-between py-1 border-bottom border-opacity-25">
-                                        <div class="text-white"><i class="fa-solid fa-door-open me-2"></i><?= e($r['nama_ruangan']); ?></div>
-                                        <div class="fw-bold text-info"><?= e($r['total']); ?>x</div>
+                                    <li class="d-flex justify-content-between py-1 border-bottom border-opacity-25 room-list-item">
+                                        <div class="room-name"><i class="fa-solid fa-door-open me-2"></i><?= e($r['nama_ruangan']); ?></div>
+                                        <div class="fw-bold room-count"><?= e($r['total']); ?>x</div>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -194,7 +664,7 @@
                 <div class="col-md-4 mb-4">
                     <div class="small-card card-glass h-100">
                         <div class="fw-bold mb-2">Monthly Trend (<?= date('Y'); ?>)
-                            <button class="btn btn-sm btn-outline-light float-end mb-2" onclick="exportChartWithImageToExcel()"><i class="fa fa-file-excel"></i> Export to Excel</button>
+                            <button class="btn btn-sm btn-outline-dark float-end mb-2" onclick="exportChartWithImageToExcel()"><i class="fa fa-file-excel"></i> Export to Excel</button>
                         </div>
                         <div class="canvas-wrap">
                             <canvas id="monthlyStatsChart" style="width:100%; height:260px;"></canvas>
@@ -248,23 +718,23 @@
                     </select>
                     <input id="dateFilter" class="form-control form-control-sm w-15 dateFilter" placeholder="Enter Date" />
                     <div style="display:flex; gap:8px;">
-                        <button id="applyFilter" class="btn btn-sm btn-outline-light">Apply</button>
-                        <button id="resetFilter" class="btn btn-sm btn-outline-light">Reset</button>
-                        <button id="exportToExcel" class="btn btn-sm btn-outline-light" onclick="exportBookingTableToExcel()"><i class="fa fa-file-excel"></i> Export to Excel</button>
+                        <button id="applyFilter" class="btn btn-sm btn-outline-dark">Apply</button>
+                        <button id="resetFilter" class="btn btn-sm btn-outline-dark">Reset</button>
+                        <button id="exportToExcel" class="btn btn-sm btn-outline-dark" onclick="exportBookingTableToExcel()"><i class="fa fa-file-excel"></i> Export to Excel</button>
                     </div>
                 </div>
                 <div class="table-wrap" style="overflow-x:auto;">
                     <table id="bookingTable" class="table-responsive">
                         <thead>
                             <tr>
-                                <th style="width:60px">#</th>
+                                <th style="width:50px">#</th>
                                 <th>Room</th>
                                 <th>Capacity</th>
                                 <th>Name</th>
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Status</th>
-                                <th style="width:160px">Action</th>
+                                <th style="width:170px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -291,9 +761,9 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#detailModal<?= e($b->id_booking ?? ''); ?>" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                                        <a href="<?= e(base_url('dashboard/edit_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-outline-success me-1" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= e(base_url('dashboard/delete_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-outline-danger"  title="Delete"><i class="fa-solid fa-trash"></i></a>
+                                        <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#detailModal<?= e($b->id_booking ?? ''); ?>" title="Detail"><i class="fa-solid fa-eye"></i></button>
+                                        <a href="<?= e(base_url('dashboard/edit_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-success me-1" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <a href="<?= e(base_url('dashboard/delete_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-danger"  title="Delete"><i class="fa-solid fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -366,38 +836,85 @@
                 const c = ['rgba(94,232,255,0.95)','rgba(167,139,250,0.95)','rgba(94,232,154,0.95)','rgba(255,191,105,0.95)','rgba(255,140,140,0.95)'];
                 return c[i % c.length];
             }
-            (function(){
+            (function() {
                 const ctx = document.getElementById('bookingStatusChart');
                 if (!ctx) return;
+
+                const makeGradient = (color1, color2) => {
+                    const canvas = document.createElement('canvas');
+                    const ctx2 = canvas.getContext('2d');
+                    const gradient = ctx2.createLinearGradient(0, 0, 0, 400);
+                    gradient.addColorStop(0, color1);
+                    gradient.addColorStop(1, color2);
+                    return gradient;
+                };
+
+                const gradientColors = [
+                    makeGradient('#ffd700', '#ffed4e'), 
+                    makeGradient('#00ff88', '#00cc66'),
+                    makeGradient('#4dabf7', '#228be6') 
+                ];
+
                 new Chart(ctx, {
                     type: 'pie',
                     data: {
                         labels: Object.keys(statusCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
                         datasets: [{
                             data: Object.values(statusCounts),
-                            backgroundColor: ['#ffc65bff','#3ee89a','#4484deff'],
-                            borderColor: ['#0b1120','#0b1120','#0b1120'],
-                            borderWidth: 2
+                            backgroundColor: gradientColors,
+                            borderColor: ['#ffd700', '#00ff88', '#4dabf7'],
+                            borderWidth: 2,
+                            hoverBorderColor: '#fff',
+                            hoverBorderWidth: 3,
+                            offset: 10
                         }]
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: 10
+                        },
                         plugins: {
-                            legend: { position: 'bottom', labels: { color: '#dff6f5' } },
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#fff',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    },
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
                             tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                cornerRadius: 8,
+                                displayColors: true,
                                 callbacks: {
                                     label: function(ctx) {
                                         const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                        const v = ctx.raw || 0;
-                                        const p = total > 0 ? ((v / total) * 100).toFixed(1) : 0;
-                                        return ctx.label + ': ' + v + ' (' + p + '%)';
+                                        const value = ctx.raw || 0;
+                                        const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                        return `${ctx.label}: ${value} (${percent}%)`;
                                     }
                                 }
                             }
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true,
+                            duration: 2000,
+                            easing: 'easeOutBounce'
                         }
                     }
                 });
             })();
+
             (function(){
                 const ctx = document.getElementById('roomStatsChart');
                 if (!ctx) return;
@@ -410,9 +927,68 @@
                         datasets: [{
                             label: 'Usage',
                             data: data,
-                            backgroundColor: labels.map((_,i)=> palette(i)),
-                            borderRadius: 8,
-                            borderSkipped: false
+                            backgroundColor: labels.map((_,i) => {
+                                const colors = [
+                                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                                    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                                    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                                    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+                                ];
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                                const color = colors[i % colors.length];
+                                if (color.includes('#667eea')) {
+                                    gradient.addColorStop(0, '#667eea');
+                                    gradient.addColorStop(1, '#764ba2');
+                                } else if (color.includes('#f093fb')) {
+                                    gradient.addColorStop(0, '#f093fb');
+                                    gradient.addColorStop(1, '#f5576c');
+                                } else if (color.includes('#4facfe')) {
+                                    gradient.addColorStop(0, '#4facfe');
+                                    gradient.addColorStop(1, '#00f2fe');
+                                } else if (color.includes('#43e97b')) {
+                                    gradient.addColorStop(0, '#43e97b');
+                                    gradient.addColorStop(1, '#38f9d7');
+                                } else {
+                                    gradient.addColorStop(0, '#fa709a');
+                                    gradient.addColorStop(1, '#fee140');
+                                }
+                                return gradient;
+                            }),
+                            borderRadius: 12,
+                            borderSkipped: false,
+                            hoverBackgroundColor: labels.map((_,i) => {
+                                const colors = [
+                                    'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                                    'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+                                    'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+                                    'linear-gradient(135deg, #38f9d7 0%, #43e97b 100%)',
+                                    'linear-gradient(135deg, #fee140 0%, #fa709a 100%)'
+                                ];
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                                const color = colors[i % colors.length];
+                                if (color.includes('#764ba2')) {
+                                    gradient.addColorStop(0, '#764ba2');
+                                    gradient.addColorStop(1, '#667eea');
+                                } else if (color.includes('#f5576c')) {
+                                    gradient.addColorStop(0, '#f5576c');
+                                    gradient.addColorStop(1, '#f093fb');
+                                } else if (color.includes('#00f2fe')) {
+                                    gradient.addColorStop(0, '#00f2fe');
+                                    gradient.addColorStop(1, '#4facfe');
+                                } else if (color.includes('#38f9d7')) {
+                                    gradient.addColorStop(0, '#38f9d7');
+                                    gradient.addColorStop(1, '#43e97b');
+                                } else {
+                                    gradient.addColorStop(0, '#fee140');
+                                    gradient.addColorStop(1, '#fa709a');
+                                }
+                                return gradient;
+                            })
                         }]
                     },
                     options: {
@@ -449,8 +1025,8 @@
                         responsive: true,
                         plugins: { legend: { display: false } },
                         scales: {
-                            y: { beginAtZero: true, ticks: { color: '#9aa4b2' }, grid: { color: 'rgba(255,255,255,0.02)' } },
-                            x: { ticks: { color: '#9aa4b2' }, grid: { display: false } }
+                            y: { beginAtZero: true, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.02)' } },
+                            x: { ticks: { color: '#fff' }, grid: { display: false } }
                         }
                     }
                 });
@@ -592,6 +1168,38 @@
             const htmlElement = document.documentElement;
             const iconElement = toggleButton.querySelector('i');
 
+            function updateChartColors(isLight) {
+                const textColor = isLight ? '#333' : '#fff';
+                const tooltipBg = isLight ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
+                const tooltipText = isLight ? '#fff' : '#000';
+                const pieChart = Chart.getChart('bookingStatusChart');
+                if (pieChart) {
+                    pieChart.options.plugins.legend.labels.color = textColor;
+                    pieChart.options.plugins.tooltip.backgroundColor = tooltipBg;
+                    pieChart.options.plugins.tooltip.titleColor = tooltipText;
+                    pieChart.options.plugins.tooltip.bodyColor = tooltipText;
+                    pieChart.update();
+                }
+                const barChart = Chart.getChart('roomStatsChart');
+                if (barChart) {
+                    barChart.options.plugins.tooltip.backgroundColor = tooltipBg;
+                    barChart.options.plugins.tooltip.titleColor = tooltipText;
+                    barChart.options.plugins.tooltip.bodyColor = tooltipText;
+                    barChart.options.scales.y.ticks.color = textColor;
+                    barChart.options.scales.x.ticks.color = textColor;
+                    barChart.update();
+                }
+                const lineChart = Chart.getChart('monthlyStatsChart');
+                if (lineChart) {
+                    lineChart.options.plugins.tooltip.backgroundColor = tooltipBg;
+                    lineChart.options.plugins.tooltip.titleColor = tooltipText;
+                    lineChart.options.plugins.tooltip.bodyColor = tooltipText;
+                    lineChart.options.scales.y.ticks.color = textColor;
+                    lineChart.options.scales.x.ticks.color = textColor;
+                    lineChart.update();
+                }
+            }
+
             function applyMode(isLight) {
                 if (isLight) {
                     htmlElement.classList.add('light-mode');
@@ -603,6 +1211,7 @@
                     toggleButton.title = 'Toggle light mode';
                 }
                 localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                updateChartColors(isLight);
             }
 
             const savedTheme = localStorage.getItem('theme');

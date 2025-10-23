@@ -123,30 +123,6 @@
         */
         setInterval(updateClock, 1000);
         updateClock();
-
-        
-        /*
-        const interval = 5000; // refresh tiap 5 detik
-        const idRuangan = 2001;
-        const url = `http://localhost/pkl/menegement_booking_room_V1/display/?id_ruangan=${idRuangan}`;
-
-        setInterval(() => {
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("HTTP error " + response.status);
-                    }
-                    return response.text(); // atau .json() jika api mengembalikan JSON
-                })
-                .then(data => {
-                    document.getElementById("jadwal").innerHTML = data;
-                })
-                .catch(error => {
-                    console.error("Gagal mengambil data jadwal:", error);
-                    document.getElementById("jadwal").innerText = "Gagal memuat data.";
-                });
-        }, interval);
-        */
         
     </script>
 </body>
