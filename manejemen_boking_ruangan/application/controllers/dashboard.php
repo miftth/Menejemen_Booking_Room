@@ -467,6 +467,49 @@ class Dashboard extends CI_Controller {
         $this->load->view('template/menu');
         $this->load->view('dashboard/menage_bookings', $data);
     }
+    public function add_room() {
+        $this->db->select_max('id_ruangan');
+        $max_id = $this->db->get('tb_ruangan')->row()->id_ruangan;
+        $new_id = $max_id + 1;
+
+        $config['upload_path'] = './assets/image/';
+        $config['allowed_types'] = 'jpg|jpeg|png|gif';
+        $config['max_size'] = 2048; 
+        $config['file_name'] = time().$_FILES['foto_ruangan']['name'];
+        $this->load->library('upload', $config);
+
+        $data_form = [
+            'id_ruangan' => $new_id,
+            'nama_ruangan' => $this->input->post('nama_ruangan', TRUE),
+            'foto_ruangan' => $config['file_name'],
+            'kapasitas' => $this->input->post('kapasitas', TRUE),
+            'fasilitas' => $this->input->post('fasilitas', TRUE),
+            'ip_address' => $this->input->post('ip_address', TRUE)
+        ];
+
+        if ($this->upload->do_upload('foto_ruangan')) {
+            $this->db->insert('tb_ruangan', $data_form);
+            $this->session->set_flashdata('success_toast', 'Ruangan berhasil ditambahkan.');
+            redirect('dashboard/menage_bookings');
+        } else {
+            $this->session->set_flashdata('error_toast', 'Gagal mengupload foto ruangan: ' . $this->upload->display_errors());
+            redirect('dashboard/menage_bookings');
+        }
+
+    }
+    public function edit_booking($id) {
+        $this->db->set('name', $this->input->post('name', TRUE))
+                 ->set('email', $this->input->post('email', TRUE))
+                 ->where('id_booking', $id)
+                 ->update('tb_booking');
+        $this->session->set_flashdata('success_toast', 'Booking berhasil diubah.');
+        redirect('dashboard/menage_bookings');
+    }
+    public function delete_booking($id) {
+        $this->db->where('id_booking', $id)->delete('tb_booking');
+        $this->session->set_flashdata('success_toast', 'Booking berhasil dihapus.');
+        redirect('dashboard/menage_bookings');
+    }
     public function booking_success($token) {
         if (!preg_match('/^[a-f0-9]{32}$/', $token)) {
             show_404();

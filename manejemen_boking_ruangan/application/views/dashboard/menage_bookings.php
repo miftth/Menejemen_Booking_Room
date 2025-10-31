@@ -544,6 +544,16 @@
             background: rgba(255,255,255,0.05);
         }
     </style>
+    <?php if($this->session->flashdata('success_toast')): ?>
+        <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <?= e($this->session->flashdata('success_toast')); ?>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    <?php endif; ?>
         <div class="wrap">
             <header>
                 <div class="brand">
@@ -579,6 +589,10 @@
                             <div class="fs-4 fw-bold"><?= e($total_booking); ?></div>
                             <div class="muted-small">Favorite: <?= e($favorite_room); ?></div>
                         </div>
+                        <div class="text-end">
+                            <div class="muted-small">Top Room</div>
+                            <div class="fw-bold" style="color:#F59E0B;"><?= e($favorite_room); ?></div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -593,10 +607,7 @@
                                 <div class="muted-small">Favorite: <?= e($favorite_room); ?></div>
                             </div>
                         </div>
-                        <div class="text-end">
-                            <div class="muted-small">Top Room</div>
-                            <div class="fw-bold" style="color:#F59E0B;"><?= e($favorite_room); ?></div>
-                        </div>
+                            <button class="btn btn-sm btn-outline-dark float-end mb-2" data-bs-toggle="modal" data-bs-target="#addRoomModal" title="Add Room"><i class="fa fa-plus"></i> Add Room</button>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -762,8 +773,33 @@
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#detailModal<?= e($b->id_booking ?? ''); ?>" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                                        <a href="<?= e(base_url('dashboard/edit_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-success me-1" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= e(base_url('dashboard/delete_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-danger"  title="Delete"><i class="fa-solid fa-trash"></i></a>
+                                        <button class="btn btn-sm btn-success me-1" type="button" data-bs-toggle="collapse" data-bs-target="#editCollapse<?= e($b->id_booking ?? ''); ?>" aria-expanded="false" aria-controls="editCollapse<?= e($b->id_booking ?? ''); ?>" title="Edit">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <a href="<?= e(base_url('dashboard/delete_booking/'.($b->id_booking ?? ''))); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this booking?')" title="Delete"><i class="fa-solid fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <tr class="collapse" id="editCollapse<?= e($b->id_booking ?? ''); ?>" data-status="<?= e($status); ?>" data-room="<?= e($b->nama_ruangan ?? ''); ?>" data-date="<?= e(date('d F Y', strtotime($b->date ?? ''))); ?>" data-name="<?= e($b->name ?? ''); ?>">
+                                    <td colspan="9" class="p-0">
+                                        <div>
+                                            <div class="card card-body bg-transparent border-0 m-2">
+                                                <form method="POST" action="<?= e(base_url('dashboard/edit_booking/'.($b->id_booking ?? ''))); ?>">
+                                                    <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label fw-bold">Name</label>
+                                                            <input type="text" name="name" class="form-control" value="<?= e($b->name ?? ''); ?>" required />
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label fw-bold">Email</label>
+                                                            <input type="email" name="email" class="form-control" value="<?= e($b->email ?? ''); ?>" readonly />
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i> Save Changes</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -781,7 +817,7 @@
                     <div class="modal-content shadow-lg border-0">
                         <div class="modal-header bg-primary text-white">
                             <h5 class="modal-title" id="detailModalLabel<?= e($b->id_booking ?? ''); ?>">
-                                <i class="fa-solid fa-circle-info me-2"></i> Full Booking Details
+                                <i class="fa-solid fa-circle-info me-2"></i> Booking Data
                             </h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
@@ -795,6 +831,7 @@
                                 <li class="list-group-item"><strong>Time:</strong> <?= e(date('H:i', strtotime($b->start_time ?? ''))); ?> - <?= e(date('H:i', strtotime($b->end_time ?? ''))); ?></li>
                                 <li class="list-group-item"><strong>Capacity:</strong> <?= e($b->kapasitas ?? '-'); ?> people</li>
                                 <li class="list-group-item"><strong>Room IP Address:</strong> <?= e($b->ip_address ?? '-'); ?></li>
+                                <li class="list-group-item"> <a href="<?= base_url('dashboard/booking_success/'.e($b->token ?? '')); ?>" target="_blank">Click here for booking details</a></li>
                             </ul>
                         </div>
                         <div class="modal-footer bg-light">
@@ -806,6 +843,45 @@
                 </div>
             </div>
         <?php endforeach; ?>
+        <div class="modal fade" id="addRoomModal" tabindex="-1" aria-labelledby="addRoomModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="addRoomModalLabel">
+                            <i class="fa-solid fa-door-open me-2"></i> Add New Room
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="<?= e(base_url('dashboard/add_room')); ?>" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-dark">Room Name</label>
+                                <input type="text" name="nama_ruangan" class="form-control" placeholder="Enter room name" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="form-label fw-bold text-dark">Photo of the room </label><span class="text-secondary ms-2 ">jpg | jpeg | png </span>
+                                <input type="file" name="foto_ruangan" class="form-control" accept="image/*" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-dark">Capacity</label>
+                                <input type="number" name="kapasitas" class="form-control" placeholder="Enter room capacity" min="1" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-dark">Facilities</label>
+                                <textarea name="fasilitas" class="form-control" placeholder="Enter room facilities (comma separated)" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-dark">IP Address</label>
+                                <input type="text" name="ip_address" class="form-control" placeholder="Enter room IP address" required />
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus me-1"></i> Add Room</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="<?= base_url('assets/js/bootstrap.bundle.min.js'); ?>"></script>
         <script src="<?= base_url('assets/js/exceljs.min.js'); ?>"></script>
         <script src="<?= base_url('assets/js/FileSaver.min.js'); ?>"></script>
@@ -1131,9 +1207,9 @@
                     } else row.style.display = 'none';
                 });
                 rowCount.textContent = visible;
-                const up = document.querySelectorAll('tbody tr[data-status="upcoming"]:not([style*="display: none"])').length;
-                const on = document.querySelectorAll('tbody tr[data-status="ongoing"]:not([style*="display: none"])').length;
-                const fin = document.querySelectorAll('tbody tr[data-status="finished"]:not([style*="display: none"])').length;
+                const up = document.querySelectorAll('tbody tr[data-status="upcoming"]:not([style*="display: none"]):not(.collapse)').length;
+                const on = document.querySelectorAll('tbody tr[data-status="ongoing"]:not([style*="display: none"]):not(.collapse)').length;
+                const fin = document.querySelectorAll('tbody tr[data-status="finished"]:not([style*="display: none"]):not(.collapse)').length;
                 const sEl = document.getElementById('summaryText');
                 if(sEl) sEl.textContent = `${up} upcoming · ${on} ongoing · ${fin} finished`;
             }
